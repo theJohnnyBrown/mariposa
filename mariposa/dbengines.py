@@ -116,11 +116,10 @@ class postgres(GenericEngine):
     def __init__(self, connection_string):
         import psycopg2
         self.engine = psycopg2
-        connection_dict = json.loads(connection_string)
-        schema = connection_dict.pop('schema', None)
-        super(postgres, self).__init__(json.dumps(connection_dict))
-        if schema:
-            self.execute('SET search_path = %s' % schema)
+        self.connection = self.engine.connect(connection_string)
+        self.ProgrammingError = self.engine.ProgrammingError
+        self.OperationalError = self.engine.OperationalError
+        
 
     def execute(self, statement):
         try:
